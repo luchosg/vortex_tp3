@@ -1,9 +1,10 @@
-import { CREATE_EMPLOYEE, DELETE_EMPLOYEE, EDIT_EMPLOYEE } from "../actions/types";
+import { CREATE_EMPLOYEE, DELETE_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEES } from "../actions/types";
 import {initialEmployeesList} from './initialState';
 
 const initialState = {
     employees: initialEmployeesList,
-    nextId: [initialEmployeesList.length]
+    nextId: [initialEmployeesList.length],
+    fetched_employees: null
 }
 
 const employeesReducer = (state = initialState, action) => {
@@ -21,6 +22,8 @@ const employeesReducer = (state = initialState, action) => {
         case EDIT_EMPLOYEE:
             return {...state, employees: state.employees.map(
                 employee => employee.id === action.payload.id  ? action.payload : employee)}
+        case FETCH_EMPLOYEES:
+            return {...state, fetched_employees: action.payload}
         default:
             return state
     }

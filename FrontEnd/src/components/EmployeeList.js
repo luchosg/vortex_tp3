@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteEmployee } from '../actions';
+import { deleteEmployee, fetchEmployees } from '../actions';
 
 import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -19,7 +19,13 @@ const EmployeeList = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openDialog, setOpenDialog] = useState(false);
-    const [idToDelete, setIdToDelete] = useState(null)
+    const [idToDelete, setIdToDelete] = useState(null);
+
+    const fetched_employees = useSelector(state => state.rrhh.fetched_employees);
+
+    useEffect(()=>{
+        dispatch(fetchEmployees());
+    }, [dispatch])
 
     //------------------------ HANDLERS ------------------------------
 
