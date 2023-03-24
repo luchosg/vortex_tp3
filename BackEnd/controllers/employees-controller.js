@@ -34,7 +34,13 @@ const createEmployee = async (req, res, next) => {
     try{
         const reqBody = {...req.body};
         const insertId = await employeeModel.createEmployee(reqBody);
-        res.status(201).json({message: `Employee created with id ${insertId}`});
+        res.status(201).json({
+            message: `Employee created with id ${insertId}`,
+            data: {
+                ...reqBody,
+                id: insertId
+            }
+        });
     } catch({message}){
         next(new HttpError(message, 500));
     }

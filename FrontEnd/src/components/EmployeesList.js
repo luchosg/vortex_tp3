@@ -15,17 +15,24 @@ const EmployeesList = () => {
     //------------------------ HOOKS --------------------------------
 
     const employeesList = useSelector(state => state.rrhh.employees);
-    const nextId = useSelector(state => state.rrhh.nextId[0]);
+    // const nextId = useSelector(state => state.rrhh.nextId[0]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openDialog, setOpenDialog] = useState(false);
     const [idToDelete, setIdToDelete] = useState(null);
-
+    const [isLoading, setLoading] = useState(true);
     const fetched_employees = useSelector(state => state.rrhh.fetched_employees);
 
+    // useEffect(()=>{
+    //     dispatch(fetchEmployees());
+    // }, [dispatch, fetched_employees])
+
     useEffect(()=>{
-        dispatch(fetchEmployees());
-    }, [dispatch])
+        if(isLoading){
+            dispatch(fetchEmployees());
+        }
+        setLoading(false);
+    }, [dispatch, fetched_employees, isLoading])
 
     //------------------------ HANDLERS ------------------------------
 
@@ -37,6 +44,7 @@ const EmployeesList = () => {
     const handleAcceptDelete = event => {
         setOpenDialog(false);
         dispatch(deleteEmployee(Number(event.target.id)));
+        setLoading(true);
         setIdToDelete(null);
     }
 
@@ -56,6 +64,7 @@ const EmployeesList = () => {
     }
     
     const renderOptionButtons = (params) => { 
+        console.log(params);
         return(
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
@@ -165,11 +174,11 @@ const EmployeesList = () => {
                     <h1>Lista de empleados</h1>
                 </div>
                 <div width= '100%'>
-                    {employeesList ? renderTable() : renderInit()}
+                    {fetched_employees ? renderTable() : renderInit()}
                 </div>
                 <div>
                     <Fab color="primary" aria-label="add">
-                        <AddIcon onClick={() => navigate(`/new/${nextId}`)} />
+                        <AddIcon onClick={() => navigate(`/new`)} />
                     </Fab>
                 </div>
                 <div>

@@ -12,7 +12,7 @@ const App = () => {
     createRoutesFromElements(
         <Route path='/' element={<NavBarWrapper />} errorElement={<ErrorPath error='ruta'/>}>
             <Route path='/' element={<EmployeesList />} />
-            <Route path='/new/:id' element={<EmployeesForm />} />
+            <Route path='/new' element={<EmployeesForm />} />
             <Route path='/employee/:id' element={<EmployeesForm />} errorElement={<ErrorPath error='empleado'/>}/>
         </Route>
     )
