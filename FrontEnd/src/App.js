@@ -1,10 +1,10 @@
 import React from 'react';
 import {Route, createRoutesFromElements, createBrowserRouter, RouterProvider,} from 'react-router-dom';
-import EmployeesList from './components/EmployeesList';
+import EmployeesList from './pages/EmployeesList';
 import ErrorPath from './components/Common/ErrorPath';
 import NavBarWrapper from './components/Common/NavBarWrapper';
 // import EmployeeForm from './components/EmployeeForm';
-import EmployeesForm from './components/EmployeesForm';
+import EmployeesForm from './pages/EmployeesForm';
 
 const App = () => {
 

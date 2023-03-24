@@ -24,13 +24,6 @@ export const deleteEmployee = id => async dispatch => {
     dispatch({type: DELETE_EMPLOYEE, payload: id});
 }
 
-// export const deleteEmployee = id => {
-//     return {
-//         type: DELETE_EMPLOYEE,
-//         payload: id
-//     }
-// }
-
 export const editEmployee = employee => async dispatch => {
     const response = await fetch(`http://localhost:8000/employees/${employee.id}`, {
         method: "PUT",
@@ -43,13 +36,6 @@ export const editEmployee = employee => async dispatch => {
     console.log(data)
     dispatch({type: EDIT_EMPLOYEE, payload: employee});
 }
-
-// export const editEmployee = employee => {
-//     return {
-//         type: EDIT_EMPLOYEE,
-//         payload: employee
-//     }
-// }
 
 export const fetchEmployees = () => async dispatch => {
     const response = await fetch('http://localhost:8000/employees');
