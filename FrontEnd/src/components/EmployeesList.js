@@ -11,7 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
-const EmployeeList = () => {
+const EmployeesList = () => {
     //------------------------ HOOKS --------------------------------
 
     const employeesList = useSelector(state => state.rrhh.employees);
@@ -46,12 +46,14 @@ const EmployeeList = () => {
 
     //------------------------ TABLA/PAGINACION -----------------------
 
-    const createData = (id, firstName, lastName, email) => {
-        return { id, firstName, lastName, email };
+    const createData = (id, first_name, last_name, cuit) => {
+        return { id, first_name, last_name, cuit };
       }
 
     const rows = [];
-    employeesList.map(employee => rows.push(createData(employee.id, employee.firstName, employee.lastName, employee.email)));
+    if(fetched_employees){
+        fetched_employees.map(employee => rows.push(createData(employee.id, employee.first_name, employee.last_name, employee.cuit)));
+    }
     
     const renderOptionButtons = (params) => { 
         return(
@@ -77,18 +79,18 @@ const EmployeeList = () => {
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
-          field: 'firstName',
+          field: 'first_name',
           headerName: 'First name',
           width: 150,
         },
         {
-          field: 'lastName',
+          field: 'last_name',
           headerName: 'Last name',
           width: 150,
         },
         {
-            field: 'email',
-            headerName: 'e-mail',
+            field: 'cuit',
+            headerName: 'cuit',
             width: 220,
         },
         {
@@ -178,4 +180,4 @@ const EmployeeList = () => {
     )    
 }
 
-export default EmployeeList;
+export default EmployeesList;

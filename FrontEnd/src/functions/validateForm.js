@@ -1,27 +1,11 @@
-const validateForm = ({firstName, lastName, email, phoneNumber, hireDate, salary}) => {
+const validateForm = ({first_name, last_name, cuit, team_id, join_date, rol}) => {
     const errors =  [];
-    const validateEmail = () => {
-        const [usuario, dominio] = email.split('@');
-        if(!dominio || usuario.includes('@') || dominio.includes('@')){
-            return false;
-        }
-        const [organizacion, tipo] = dominio.split('.');
-        if(!tipo || organizacion.includes('.') || tipo.includes('.')){
-            return false;
-        }
-        if(usuario.length === 0 || tipo.length !== 3 || organizacion.length === 0){
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    if(firstName.length === 0) {errors.push('firstName')}
-    if(lastName.length === 0) {errors.push('lastName')}
-    if(!validateEmail()) {errors.push('email')}
-    if(phoneNumber.length !== 10) {errors.push('phoneNumber')}
-    if(hireDate.length !== 10) {errors.push('hireDate')}
-    if(salary <= 0) {errors.push('salary')}
+    if(first_name.length < 2) {errors.push('first name')}
+    if(last_name.length < 2) {errors.push('last name')}
+    if(cuit.length !== 13) {errors.push('cuit')}
+    if(join_date.length !== 10) {errors.push('join_date')}
+    if(rol.length <2) {errors.push('rol')}
+    if(team_id.length > 5) {errors.push('team_id')}
 
     return errors;
 }
