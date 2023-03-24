@@ -7,7 +7,7 @@ const getAllEmployees = async (req, res, next) => {
         const queryParams = req.query;
         const employees = await employeeModel.getAllEmployees(queryParams);
         if(employees.length === 0){
-            next(new HttpError(`Could not find employees`), 404);
+            next(new HttpError(`Could not find employees`, 404));
         } else {
             res.status(200).json({data : employees});
         }

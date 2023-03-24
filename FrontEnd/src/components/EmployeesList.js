@@ -14,7 +14,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const EmployeesList = () => {
     //------------------------ HOOKS --------------------------------
 
-    const employeesList = useSelector(state => state.rrhh.employees);
     // const nextId = useSelector(state => state.rrhh.nextId[0]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -36,14 +35,14 @@ const EmployeesList = () => {
 
     //------------------------ HANDLERS ------------------------------
 
-    const handleDelete = event => {
+    const handleDelete = id => {
         setOpenDialog(true);
-        setIdToDelete(event.target.id);
+        setIdToDelete(id);
     }
 
-    const handleAcceptDelete = event => {
+    const handleAcceptDelete = ()=> {
         setOpenDialog(false);
-        dispatch(deleteEmployee(Number(event.target.id)));
+        dispatch(deleteEmployee(Number(idToDelete)));
         setLoading(true);
         setIdToDelete(null);
     }
@@ -63,20 +62,19 @@ const EmployeesList = () => {
         fetched_employees.map(employee => rows.push(createData(employee.id, employee.first_name, employee.last_name, employee.cuit)));
     }
     
-    const renderOptionButtons = (params) => { 
-        console.log(params);
+    const renderOptionButtons = ({id}) => { 
         return(
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
-                    id={params.id} 
-                    onClick={event => navigate(`/employee/${event.target.id}`)} 
+                    id={id} 
+                    onClick={() => navigate(`/employee/${id}`)} 
                     variant="contained"
                     startIcon={<VisibilityIcon />}
                     >More Info
                 </Button>
                 <Button 
-                    id={params.id} 
-                    onClick={handleDelete} 
+                    id={id} 
+                    onClick={() => handleDelete(id)} 
                     variant="contained"
                     startIcon={<DeleteIcon />}
                     >Delete

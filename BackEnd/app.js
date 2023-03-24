@@ -22,7 +22,7 @@ app.use(cors());
 app.use('/employees', employeesRouter);
 app.use('/assets', assetsRouter);
 app.use((error, req, res, next) => {
-    res.status(error.statusCode).json({error: error.message});
+    res.status(error.statusCode || 500).json({error: error.message || "Something went wrong"});
 })
 
 app.listen(port, () =>
