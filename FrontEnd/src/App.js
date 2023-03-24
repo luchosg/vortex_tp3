@@ -3,7 +3,8 @@ import {Route, createRoutesFromElements, createBrowserRouter, RouterProvider,} f
 import EmployeesList from './pages/EmployeesList';
 import ErrorPath from './components/Common/ErrorPath';
 import NavBarWrapper from './components/Common/NavBarWrapper';
-// import EmployeeForm from './components/EmployeeForm';
+import AssetsList from './pages/AssetsList';
+import AssetsForm from './pages/AssetsForm';
 import EmployeesForm from './pages/EmployeesForm';
 
 const App = () => {
@@ -13,7 +14,9 @@ const App = () => {
         <Route path='/' element={<NavBarWrapper />} errorElement={<ErrorPath error='ruta'/>}>
             <Route path='/' element={<EmployeesList />} />
             <Route path='/new' element={<EmployeesForm />} />
-            <Route path='/employee/:id' element={<EmployeesForm />} errorElement={<ErrorPath error='empleado'/>}/>
+            <Route path='/employees/:id' element={<EmployeesForm />} errorElement={<ErrorPath error='empleado'/>}/>
+            <Route path='/assets' element={<AssetsList />} />
+            <Route path='/assets/:id' element={<AssetsForm />} />
         </Route>
     )
   );

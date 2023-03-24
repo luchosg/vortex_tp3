@@ -4,10 +4,10 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import {FormGroup, Container, Alert, AlertTitle, TextField, Button, Stack} from '@mui/material';
 
-import { createEmployee, editEmployee, fetchEmployee } from '../actions';
-import validateEmployee from '../functions/validateEmployee';
+import { createAsset, editAsset, fetchAsset } from '../actions';
+import validateAsset from '../functions/validateAsset';
 
-const EmployeesForm = () => {
+const AssetsForm = () => {
     //-------------------------------- HOOKS ------------------------------------------------------
 
     const {id} = useParams();
@@ -20,45 +20,46 @@ const EmployeesForm = () => {
     const newMode = pathname.includes('new');
 
     const [editMode, setEditMode] = useState(newMode);
-    const fetched_employee = useSelector(state => state.rrhh.fetched_employee);
+    const fetched_asset = useSelector(state => state.resources.fetched_asset);
 
     const formVacio = {
-        first_name: '',
-        last_name: '',
-        cuit: '',
-        team_id: '',
-        join_date: '',
-        rol: ''
+        name: '',
+        type: '',
+        // code: '',
+        // brand: '',
+        // description: '',
+        purchase_date: '',
+        employee_id: ''
     }
 
-    const [employee, setEmployee] = useState(newMode ? formVacio : fetched_employee);
+    const [asset, setAsset] = useState(newMode ? formVacio : fetched_asset);
 
     const [isLoading, setLoading] = useState(true);
     const [errors, setErrors] = useState([]);
 
     useEffect(()=>{
         if(isLoading && !newMode){
-            dispatch(fetchEmployee(id));
+            dispatch(fetchAsset(id));
         }
-        if(fetched_employee && !newMode){
-            setEmployee(fetched_employee);
+        if(fetched_asset && !newMode){
+            setAsset(fetched_asset);
         }
         setLoading(false);
-    }, [dispatch, id, fetched_employee, isLoading, newMode]);
+    }, [dispatch, id, fetched_asset, isLoading, newMode]);
     
     // ----------------------------- HANDLERS ------------------------------------------------------
 
     const handleCreate = () => {
-        if(validateEmployee(employee).length === 0){
-            dispatch(createEmployee(employee));
-            setEmployee(formVacio);
+        if(validateAsset(asset).length === 0){
+            dispatch(createAsset(asset));
+            setAsset(formVacio);
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
                 navigate('/');
             },1000);
         } else {
-            setErrors(validateEmployee(employee))
+            setErrors(validateAsset(asset))
             setAlert('validateError');
             setTimeout(()=>{
                 setAlert('');
@@ -68,20 +69,20 @@ const EmployeesForm = () => {
 
     const handleCancel = () => {
         setEditMode(!editMode);
-        setEmployee(fetched_employee);
+        setAsset(fetched_asset);
     }
 
     const handleUpdate = () => {
-        if(validateEmployee(employee).length === 0){
+        if(validateAsset(asset).length === 0){
             setEditMode(!editMode);
-            dispatch(editEmployee(employee));
+            dispatch(editAsset(asset));
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
             },1000);
         } else {
             setAlert('validateError');
-            setErrors(validateEmployee(employee));
+            setErrors(validateAsset(asset));
             setTimeout(()=>{
                 setAlert('');
             },1000);
@@ -96,7 +97,7 @@ const EmployeesForm = () => {
                 return(
                     <Alert severity="success">
                         <AlertTitle>{newMode ? 'Carga Exitosa' : 'Actualizacion Exitosa' }</AlertTitle>
-                        {newMode ? 'Empleado cargado correctamente' : 'Empleado actualizado correctamente'}
+                        {newMode ? 'Activo cargado correctamente' : 'Activo actualizado correctamente'}
                     </Alert>
                 )
             case 'validateError':
@@ -118,7 +119,7 @@ const EmployeesForm = () => {
                 disabled={disabled} 
                 id={id} 
                 label={label}
-                onChange={event => setEmployee({...employee, [event.target.id]: event.target.value })}
+                onChange={event => setAsset({...asset, [event.target.id]: event.target.value })}
                 value={value}
                 InputProps={{
                     readOnly: !editMode,
@@ -144,7 +145,7 @@ const EmployeesForm = () => {
                         {newMode ? 'Agregar' : (editMode ? 'Actualizar' : 'Editar')}
                     </Button>
                     {!editMode ? <div></div> : 
-                        <Button variant='contained' onClick={newMode ? () => setEmployee(formVacio) : handleCancel}>
+                        <Button variant='contained' onClick={newMode ? () => setAsset(formVacio) : handleCancel}>
                             {newMode ? 'Limpiar' : 'Cancelar' }
                         </Button> }
             </Stack>
@@ -155,14 +156,14 @@ const EmployeesForm = () => {
         return (
             <h1>
                 {newMode ? 
-                    'Agrega un nuevo empleado' :
-                    (editMode ? `Actualiza la informacion del empleado ${id}` : `Informacion del empleado ${id}`) }
+                    'Agrega un nuevo activo' :
+                    (editMode ? `Actualiza la informacion del activo ${id}` : `Informacion del activo ${id}`) }
             </h1>
         )
     }
 
     const renderForm = () => {
-        if(!employee){
+        if(!asset){
             return(
                 <div>Loading...</div>
             )
@@ -174,19 +175,20 @@ const EmployeesForm = () => {
                     '& .MuiTextField-root': { m: 1, width: '30ch' }
             }}>
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(true, false, 'first_name','First Name', employee.first_name)}
-                    {renderTextField(true, false, 'last_name','Last Name', employee.last_name)}
+                    {renderTextField(true, false, 'name','Name', asset.name)}
+                    {renderTextField(true, false, 'type','Type', asset.type)}
                 </Stack> 
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(true, false, 'cuit','CUIT', employee.cuit)}
-                    {renderTextField(true, false, 'team_id','Team ID', employee.team_id)}
+                    {renderTextField(false, false, 'code','Code', asset.code || '')}
+                    {renderTextField(false, false, 'brand','Brand', asset.brand || '')}
                 </Stack>
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(true, false, 'join_date', 'Join Date', employee.join_date, 'date', true)}
+                    {renderTextField(false, false, 'description','Description', asset.description || '')}
+                    {renderTextField(true, false, 'purchase_date', 'Purchase Date', asset.purchase_date, 'date', true)}
                 </Stack>
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(false, false,'rol', 'Rol', employee.rol)}
-                    {renderTextField(false, true,'id', 'id', employee.id)}
+                    {renderTextField(true, false,'employee_id', 'Employee ID', asset.employee_id)}
+                    {renderTextField(true, true,'id', 'id', asset.id)}
                 </Stack>
                 {renderButtons()}
             </FormGroup>
@@ -220,4 +222,4 @@ const EmployeesForm = () => {
     )
 }
 
-export default EmployeesForm;
+export default AssetsForm;

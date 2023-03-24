@@ -22,7 +22,7 @@ const createBodyToSQL = (tableName, reqBody) => {
     return `INSERT INTO ${tableName} (${fields}) VALUES (${values})`;
   }
 
-const filterAndPagination = (baseSQL, filterParams, limit = 5, page = 1) => {
+const filterAndPagination = (baseSQL, filterParams, limit = 10, page = 1) => {
     let newSQL = baseSQL;
     const keysArray = Object.keys(filterParams);
     const valuesArray = Object.values(filterParams);

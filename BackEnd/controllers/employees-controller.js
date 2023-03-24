@@ -37,8 +37,8 @@ const createEmployee = async (req, res, next) => {
         res.status(201).json({
             message: `Employee created with id ${insertId}`,
             data: {
-                ...reqBody,
-                id: insertId
+                id: insertId,
+                ...reqBody
             }
         });
     } catch({message}){

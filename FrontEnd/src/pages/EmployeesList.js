@@ -43,7 +43,6 @@ const EmployeesList = () => {
     const handleAcceptDelete = ()=> {
         setOpenDialog(false);
         dispatch(deleteEmployee(Number(idToDelete)));
-        setLoading(true);
         setIdToDelete(null);
     }
 
@@ -67,7 +66,7 @@ const EmployeesList = () => {
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
                     id={id} 
-                    onClick={() => navigate(`/employee/${id}`)} 
+                    onClick={() => navigate(`/employees/${id}`)} 
                     variant="contained"
                     startIcon={<VisibilityIcon />}
                     >More Info

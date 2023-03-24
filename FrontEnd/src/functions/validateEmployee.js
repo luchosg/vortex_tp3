@@ -1,4 +1,4 @@
-const validateForm = ({first_name, last_name, cuit, team_id, join_date, rol}) => {
+const validateEmployee = ({first_name, last_name, cuit, team_id, join_date, rol}) => {
     const errors =  [];
     if(first_name.length < 2) {errors.push('first_name')}
     if(last_name.length < 2) {errors.push('last_name')}
@@ -10,4 +10,4 @@ const validateForm = ({first_name, last_name, cuit, team_id, join_date, rol}) =>
     return errors;
 }
 
-export default validateForm;
+export default validateEmployee;
