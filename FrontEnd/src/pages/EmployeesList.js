@@ -14,17 +14,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const EmployeesList = () => {
     //------------------------ HOOKS --------------------------------
 
-    // const nextId = useSelector(state => state.rrhh.nextId[0]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openDialog, setOpenDialog] = useState(false);
     const [idToDelete, setIdToDelete] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const fetched_employees = useSelector(state => state.rrhh.fetched_employees);
-
-    // useEffect(()=>{
-    //     dispatch(fetchEmployees());
-    // }, [dispatch, fetched_employees])
+    const [filterParams, setFilterParams] = useState(null);
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(()=>{
         if(isLoading){
@@ -140,6 +137,10 @@ const EmployeesList = () => {
         )
     }
 
+    const renderFilterOptions = () => {
+        return <div></div>
+    }
+
     const renderDialog = () => {
         return (
             <Dialog
@@ -169,6 +170,16 @@ const EmployeesList = () => {
             <Stack direction='column' spacing={2} mt='100px' display='flex' justifyContent='center' alignItems='center'>
                 <div>
                     <h1>Lista de empleados</h1>
+                </div>
+                <div>
+                    <Button 
+                        variant='contained' 
+                        color='secondary' 
+                        onClick={() => setShowFilters(showFilters => !showFilters)}
+                    >
+                        {showFilters? 'Show filters' : 'Hide filters'}
+                    </Button>
+                    {showFilters? renderFilterOptions() : ''}
                 </div>
                 <div width= '100%'>
                     {fetched_employees ? renderTable() : renderInit()}

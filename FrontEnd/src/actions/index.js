@@ -11,8 +11,11 @@ import {
     DELETE_ASSET 
 } from "./types"
 
+const employeesURL = new URL('http://localhost:8000/employees');
+const assetsURL = new URL('http://localhost:8000/assets');
+
 export const createEmployee = employee => async dispatch => {
-    const response = await fetch('http://localhost:8000/employees', {
+    const response = await fetch(employeesURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -24,7 +27,7 @@ export const createEmployee = employee => async dispatch => {
 }
 
 export const deleteEmployee = id => async dispatch => {
-    const response = await fetch(`http://localhost:8000/employees/${id}`, {
+    const response = await fetch(`${employeesURL}/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -36,7 +39,7 @@ export const deleteEmployee = id => async dispatch => {
 }
 
 export const editEmployee = employee => async dispatch => {
-    const response = await fetch(`http://localhost:8000/employees/${employee.id}`, {
+    const response = await fetch(`${employeesURL}/${employee.id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -49,31 +52,32 @@ export const editEmployee = employee => async dispatch => {
 }
 
 export const fetchEmployees = () => async dispatch => {
-    const response = await fetch('http://localhost:8000/employees');
+    // employeesURL.search = new URLSearchParams(params)
+    const response = await fetch(employeesURL);
     const {data} = await response.json();
     dispatch({type: FETCH_EMPLOYEES, payload: data});
 }
 
 export const fetchEmployee = id => async dispatch => {
-    const response = await fetch(`http://localhost:8000/employees/${id}`)
+    const response = await fetch(`${employeesURL}/${id}`)
     const {data} = await response.json();
     dispatch({type: FETCH_EMPLOYEE, payload: {...data, join_date: data.join_date.split('T')[0]}});
 }
 
 export const fetchAssets = () => async dispatch => {
-    const response = await fetch('http://localhost:8000/assets');
+    const response = await fetch(assetsURL);
     const {data} = await response.json();
     dispatch({type: FETCH_ASSETS, payload: data});
 }
 
 export const fetchAsset = id => async dispatch => {
-    const response = await fetch(`http://localhost:8000/assets/${id}`)
+    const response = await fetch(`${assetsURL}/${id}`)
     const {data} = await response.json();
     dispatch({type: FETCH_ASSET, payload: {...data, purchase_date: data.purchase_date.split('T')[0]}});
 }
 
 export const createAsset = asset => async dispatch => {
-    const response = await fetch('http://localhost:8000/assets', {
+    const response = await fetch(assetsURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -85,7 +89,7 @@ export const createAsset = asset => async dispatch => {
 }
 
 export const editAsset = asset => async dispatch => {
-    const response = await fetch(`http://localhost:8000/assets/${asset.id}`, {
+    const response = await fetch(`${assetsURL}/${asset.id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -98,7 +102,7 @@ export const editAsset = asset => async dispatch => {
 }
 
 export const deleteAsset = id => async dispatch => {
-    const response = await fetch(`http://localhost:8000/assets/${id}`, {
+    const response = await fetch(`${assetsURL}/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
