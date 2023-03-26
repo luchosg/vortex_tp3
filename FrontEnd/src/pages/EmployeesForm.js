@@ -133,8 +133,6 @@ const EmployeesForm = () => {
     }
 
     const renderButtons = () => {
-        console.log('newMode', newMode);
-        console.log('editMode', editMode);
         return(
             <Stack direction='row' spacing={2} display='flex' justifyContent='center' alignItems='center'>
                     <Button 
@@ -183,10 +181,7 @@ const EmployeesForm = () => {
                 </Stack>
                 <Stack direction='row' spacing={2}>
                     {renderTextField(true, false, 'join_date', 'Join Date', employee.join_date, 'date', true)}
-                </Stack>
-                <Stack direction='row' spacing={2}>
                     {renderTextField(false, false,'rol', 'Rol', employee.rol)}
-                    {renderTextField(false, true,'id', 'id', employee.id)}
                 </Stack>
                 {renderButtons()}
             </FormGroup>

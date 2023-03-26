@@ -27,8 +27,8 @@ const deleteAsset = async aid => {
     return result.affectedRows;
 }
 
-const deleteAllAssetsByEmployeeId = async eid => {
-    const sql = `DELETE FROM assets WHERE employee_id = ${eid}`;
+const resetAllAssetsByEmployeeId = async eid => {
+    const sql = `UPDATE assets a SET employee_id = null WHERE employee_id = ${eid}`;
     const result = await connection.query(sql).spread(result => result);
     return result.affectedRows;
 }
@@ -52,5 +52,5 @@ module.exports = {
     createAsset,
     updateAsset,
     getAssetsByEmployeeId,
-    deleteAllAssetsByEmployeeId
+    resetAllAssetsByEmployeeId
 }

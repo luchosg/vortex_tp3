@@ -47,9 +47,15 @@ const deleteAsset = async (req, res, next) => {
 const createAsset = async (req, res, next) => {
     try{
         const eid = req.body.employee_id;
-        const employee = await employeeModel.getEmployeeById(eid);
-        if(employee.length === 0){
-            next(new HttpError(`Could not find employee with id ${eid}`, 404))
+        if(eid){
+            const employee = await employeeModel.getEmployeeById(eid);
+            if(employee.length === 0){
+                next(new HttpError(`Could not find employee with id ${eid}`, 404))
+            } else {
+                const reqBody = {...req.body};
+                const insertId = await assetModel.createAsset(reqBody);
+                res.status(201).json({message: `Asset created with id ${insertId}`});
+            }
         } else {
             const reqBody = {...req.body};
             const insertId = await assetModel.createAsset(reqBody);
@@ -64,6 +70,14 @@ const updateAsset = async (req, res, next) => {
     try{
         const reqBody = {...req.body};
         const aid = req.params.aid;
+        const {employee_id} = await assetModel.getAssetById(aid);
+
+        if(employee_id || reqBody.employee_id){
+            const employee = await employeeModel.getEmployeeById(reqBody.employee_id)
+            if(employee.length === 0){
+                next(new HttpError(`Employee with id ${reqBody.employee_id} not found`, 404));
+            }
+        }
         const affectedRows = await assetModel.updateAsset(reqBody, aid);
         if(affectedRows === 0){
             next(new HttpError(`Asset with id ${aid} not found`, 404));

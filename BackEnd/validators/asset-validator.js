@@ -36,8 +36,8 @@ const createAssetValidationRules = [
         .exists().withMessage("Campo obligatorio")
         .isDate().withMessage("La fecha debe tener un formato valido"),
     body('employee_id')
-        .exists().withMessage("Campo obligatorio")
-        .isLength({max:5}).withMessage("El employee_id debe tener un largo maximo de 5"),
+        .isLength({max:5}).withMessage("El employee_id debe tener un largo maximo de 5")
+        .optional({nullable: true}),
     (req, res, next) => {
         return validate(req, res, next);
     }

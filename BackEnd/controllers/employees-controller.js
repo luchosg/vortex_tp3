@@ -50,12 +50,12 @@ const createEmployee = async (req, res, next) => {
 const deleteEmployee = async (req, res, next) => {
     try{
         const eid = req.params.eid;
-        const deletedAssets = await assetModel.deleteAllAssetsByEmployeeId(eid);
+        const deletedAssets = await assetModel.resetAllAssetsByEmployeeId(eid);
         const affectedRows = await employeeModel.deleteEmployee(eid);
         if(affectedRows === 0){
             next(new HttpError(`Employee with id ${eid} not found`, 404));
         } else {
-            res.status(200).json({message: `Employee with id ${eid} and ${deletedAssets} assets deleted succesfully`})
+            res.status(200).json({message: `Employee with id ${eid} and ${deletedAssets} assets reseted succesfully`})
         }        
     } catch({message}) {
         next(new HttpError(message, 500));

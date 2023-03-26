@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteEmployee, fetchAssets } from '../actions';
+import { deleteAsset, fetchAssets } from '../actions';
 
 import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -37,8 +37,8 @@ const AssetsList = () => {
 
     const handleAcceptDelete = ()=> {
         setOpenDialog(false);
-        dispatch(deleteEmployee(Number(idToDelete)));
-        setLoading(true);
+        dispatch(deleteAsset(Number(idToDelete)));
+        // setLoading(true);
         setIdToDelete(null);
     }
 
@@ -145,11 +145,11 @@ const AssetsList = () => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {`Esta seguro de eliminar al empleado ${idToDelete}?`}
+                    {`Esta seguro de eliminar el asset ${idToDelete}?`}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        De aceptar la informacion del empleado se borrara definitivamente
+                        De aceptar la informacion del asset se borrara definitivamente
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

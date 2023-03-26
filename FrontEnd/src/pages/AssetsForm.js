@@ -6,6 +6,7 @@ import {FormGroup, Container, Alert, AlertTitle, TextField, Button, Stack} from 
 
 import { createAsset, editAsset, fetchAsset } from '../actions';
 import validateAsset from '../functions/validateAsset';
+import sanitizeAsset from '../functions/sanitizeAsset';
 
 const AssetsForm = () => {
     //-------------------------------- HOOKS ------------------------------------------------------
@@ -25,9 +26,6 @@ const AssetsForm = () => {
     const formVacio = {
         name: '',
         type: '',
-        // code: '',
-        // brand: '',
-        // description: '',
         purchase_date: '',
         employee_id: ''
     }
@@ -38,6 +36,10 @@ const AssetsForm = () => {
     const [errors, setErrors] = useState([]);
 
     useEffect(()=>{
+        if(newMode){
+            setEditMode(true);
+            setAsset(formVacio);
+        };
         if(isLoading && !newMode){
             dispatch(fetchAsset(id));
         }
@@ -56,7 +58,7 @@ const AssetsForm = () => {
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
-                navigate('/');
+                navigate('/assets');
             },1000);
         } else {
             setErrors(validateAsset(asset))
@@ -68,14 +70,14 @@ const AssetsForm = () => {
     }
 
     const handleCancel = () => {
-        setEditMode(!editMode);
+        setEditMode(false);
         setAsset(fetched_asset);
     }
 
     const handleUpdate = () => {
         if(validateAsset(asset).length === 0){
-            setEditMode(!editMode);
-            dispatch(editAsset(asset));
+            setEditMode(false);
+            dispatch(editAsset(sanitizeAsset(asset)));
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
@@ -134,14 +136,12 @@ const AssetsForm = () => {
     }
 
     const renderButtons = () => {
-        console.log('newMode', newMode);
-        console.log('editMode', editMode);
         return(
             <Stack direction='row' spacing={2} display='flex' justifyContent='center' alignItems='center'>
                     <Button 
                         variant='contained' 
                         color='secondary' 
-                        onClick={newMode ? handleCreate : (editMode ? handleUpdate : () => setEditMode(!editMode))}> 
+                        onClick={newMode ? handleCreate : (editMode ? handleUpdate : () => setEditMode(true))}> 
                         {newMode ? 'Agregar' : (editMode ? 'Actualizar' : 'Editar')}
                     </Button>
                     {!editMode ? <div></div> : 
@@ -187,8 +187,7 @@ const AssetsForm = () => {
                     {renderTextField(true, false, 'purchase_date', 'Purchase Date', asset.purchase_date, 'date', true)}
                 </Stack>
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(true, false,'employee_id', 'Employee ID', asset.employee_id)}
-                    {renderTextField(true, true,'id', 'id', asset.id)}
+                    {renderTextField(false, false,'employee_id', 'Employee ID', asset.employee_id || '')}
                 </Stack>
                 {renderButtons()}
             </FormGroup>

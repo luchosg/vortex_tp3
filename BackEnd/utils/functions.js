@@ -4,10 +4,18 @@ const updateBodyToSQL = (tableName, reqBody, eid) => {
     const length = keysArray.length;
     let sql = `UPDATE ${tableName} t SET `
     for(let i = 0; i<length; i++){
-        if(i === length-1){
-            sql += `${keysArray[i]} = "${valuesArray[i]}" `
+        if(typeof valuesArray[i] === 'string'){
+            if(i === length-1){
+                sql += `${keysArray[i]} = "${valuesArray[i]}" `
+            } else {
+                sql += `${keysArray[i]} = "${valuesArray[i]}", `
+            }
         } else {
-            sql += `${keysArray[i]} = "${valuesArray[i]}", `
+            if(i === length-1){
+                sql += `${keysArray[i]} = ${valuesArray[i]} `
+            } else {
+                sql += `${keysArray[i]} = ${valuesArray[i]}, `
+            }
         }
     }
     sql += `WHERE t.id = ${eid}`;
@@ -18,7 +26,10 @@ const createBodyToSQL = (tableName, reqBody) => {
     const keysArray = Object.keys(reqBody);
     const valuesArray = Object.values(reqBody);
     const fields = keysArray.join(", ");
-    const values = valuesArray.map(value => `'${value}'`).join(", ");
+    const values = valuesArray.map(value => {
+        if(typeof value === 'string') return `'${value}'`;
+        else return `${value}`
+        }).join(", ");
     return `INSERT INTO ${tableName} (${fields}) VALUES (${values})`;
   }
 
