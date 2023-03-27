@@ -235,19 +235,16 @@ const AssetsList = () => {
 
     const renderFilterOptions = () => {
         return (
-            <>  
-                <h4>Puede utilizar % para reemplazar el inicio o final de una busqueda</h4>
-                <Stack direction='row' spacing={2}>
-                    {renderTextField('id','by ID', filterParams.id || '')}
-                    {renderTextField('name','by Name', filterParams.name || '')}
-                    {renderTextField('type','by Type', filterParams.type || '')}
-                    {renderTextField('code','by Code', filterParams.code || '')}
-                    {renderTextField('brand','by Brand', filterParams.brand || '')}
-                    {renderTextField('description','by Description', filterParams.description || '')}
-                    {renderTextField('purchase_date','by Purchase Date', filterParams.purchase_date || '', 'date', true)}
-                    {renderTextField('employee_id','by Employee ID', filterParams.employee_id || '')}
-                </Stack> 
-            </>
+            <Stack direction='row' spacing={2}>
+                {renderTextField('id','by ID', filterParams.id || '')}
+                {renderTextField('name','by Name', filterParams.name || '')}
+                {renderTextField('type','by Type', filterParams.type || '')}
+                {renderTextField('code','by Code', filterParams.code || '')}
+                {renderTextField('brand','by Brand', filterParams.brand || '')}
+                {renderTextField('description','by Description', filterParams.description || '')}
+                {renderTextField('purchase_date','by Purchase Date', filterParams.purchase_date || '', 'date', true)}
+                {renderTextField('employee_id','by Employee ID', filterParams.employee_id || '')}
+            </Stack> 
         )
     }
 

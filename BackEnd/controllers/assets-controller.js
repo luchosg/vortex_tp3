@@ -56,6 +56,7 @@ const deleteAsset = async (req, res, next) => {
 const createAsset = async (req, res, next) => {
     try{
         const eid = req.body.employee_id;
+        console.log(eid);
         if(eid){
             const employee = await employeeModel.getEmployeeById(eid);
             if(employee.length === 0){

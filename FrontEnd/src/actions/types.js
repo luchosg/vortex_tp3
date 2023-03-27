@@ -9,3 +9,5 @@ export const FETCH_ASSETS = 'FETCH_ASSETS';
 export const CREATE_ASSET = 'CREATE_ASSET';
 export const DELETE_ASSET = 'DELETE_ASSET';
 export const EDIT_ASSET = 'EDIT_ASSET';
+
+export const ASSET_ERROR = 'ASSET_ERROR';

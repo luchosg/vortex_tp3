@@ -53,9 +53,9 @@ const filterAndPagination = (baseSQL, filterParams, limit = 5, page = 1, total) 
     else {
         for(let i = 0; i<length; i++){
             if(i === 0) {
-                newSQL += ` WHERE ${keysArray[i]} LIKE "${valuesArray[i]}"`
+                newSQL += ` WHERE ${keysArray[i]} LIKE "%${valuesArray[i]}%"`
             } else {
-                newSQL += ` AND ${keysArray[i]} LIKE "${valuesArray[i]}"`
+                newSQL += ` AND ${keysArray[i]} LIKE "%${valuesArray[i]}%"`
             }
         }
     }
@@ -78,9 +78,9 @@ const filterCount = (baseSQL, filterParams) => {
     else {
         for(let i = 0; i<length; i++){
             if(i === 0) {
-                newSQL += ` WHERE ${keysArray[i]} LIKE "${valuesArray[i]}"`
+                newSQL += ` WHERE ${keysArray[i]} LIKE "%${valuesArray[i]}%"`
             } else {
-                newSQL += ` AND ${keysArray[i]} LIKE "${valuesArray[i]}"`
+                newSQL += ` AND ${keysArray[i]} LIKE "%${valuesArray[i]}%"`
             }
         }
     }

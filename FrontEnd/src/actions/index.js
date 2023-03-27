@@ -1,13 +1,10 @@
-import { 
-    CREATE_EMPLOYEE, 
+import {  
     DELETE_EMPLOYEE, 
-    EDIT_EMPLOYEE, 
     FETCH_EMPLOYEES, 
     FETCH_EMPLOYEE, 
     FETCH_ASSETS, 
     FETCH_ASSET,
-    CREATE_ASSET,
-    EDIT_ASSET,
+    ASSET_ERROR,
     DELETE_ASSET 
 } from "./types"
 
@@ -22,8 +19,6 @@ export const createEmployee = employee => async dispatch => {
         },
         body: JSON.stringify({...employee, cuit: employee.cuit.split('-').join('')})
     });
-    const {data} = await response.json();
-    dispatch({type: CREATE_EMPLOYEE, payload: data})
 }
 
 export const deleteEmployee = id => async dispatch => {
@@ -34,7 +29,6 @@ export const deleteEmployee = id => async dispatch => {
         }
     });
     const data = await response.json();
-    console.log(data);
     dispatch({type: DELETE_EMPLOYEE, payload: id});
 }
 
@@ -46,9 +40,6 @@ export const editEmployee = employee => async dispatch => {
         },
         body: JSON.stringify(employee)
     });
-    const data = await response.json();
-    console.log(data);
-    dispatch({type: EDIT_EMPLOYEE, payload: employee});
 }
 
 export const fetchEmployees = filterParams => async dispatch => {
@@ -65,8 +56,13 @@ export const fetchEmployees = filterParams => async dispatch => {
 
 export const fetchEmployee = id => async dispatch => {
     const response = await fetch(`${employeesURL}/${id}`)
-    const {data} = await response.json();
-    dispatch({type: FETCH_EMPLOYEE, payload: {...data, join_date: data.join_date.split('T')[0]}});
+    if(response.ok){
+        const {data} = await response.json();
+        dispatch({type: FETCH_EMPLOYEE, payload: {...data, join_date: data.join_date.split('T')[0]}});
+    } else {
+        dispatch({type: FETCH_EMPLOYEE, payload: null});
+    }
+    
 }
 
 export const fetchAssets = filterParams => async dispatch => {
@@ -83,8 +79,12 @@ export const fetchAssets = filterParams => async dispatch => {
 
 export const fetchAsset = id => async dispatch => {
     const response = await fetch(`${assetsURL}/${id}`)
-    const {data} = await response.json();
-    dispatch({type: FETCH_ASSET, payload: {...data, purchase_date: data.purchase_date.split('T')[0]}});
+    if(response.ok){
+        const {data} = await response.json();
+        dispatch({type: FETCH_ASSET, payload: {...data, purchase_date: data.purchase_date.split('T')[0]}});
+    } else {
+        dispatch({type: FETCH_ASSET, payload: null});
+    }
 }
 
 export const createAsset = asset => async dispatch => {
@@ -95,8 +95,10 @@ export const createAsset = asset => async dispatch => {
         },
         body: JSON.stringify(asset)
     });
-    const {data} = await response.json();
-    dispatch({type: CREATE_ASSET, payload: data})
+    if(!response.ok){
+        const {error} = await response.json();
+        dispatch({type: ASSET_ERROR, payload: error});
+    }
 }
 
 export const editAsset = asset => async dispatch => {
@@ -107,9 +109,6 @@ export const editAsset = asset => async dispatch => {
         },
         body: JSON.stringify(asset)
     });
-    const data = await response.json();
-    console.log(data);
-    dispatch({type: EDIT_ASSET, payload: asset});
 }
 
 export const deleteAsset = id => async dispatch => {
@@ -120,6 +119,12 @@ export const deleteAsset = id => async dispatch => {
         }
     });
     const data = await response.json();
-    console.log(data);
     dispatch({type: DELETE_ASSET, payload: id});
+}
+
+export const resetErrorApi = () => {
+    return({
+        type: ASSET_ERROR,
+        payload: null
+    })
 }

@@ -44,7 +44,7 @@ const NavBar = () => {
     }
 
     return(
-        <Container maxWidth="100%" sx={{ bgcolor: '#cfe8fc', height: '4vh' }}>
+        <Container maxWidth="100%" sx={{ bgcolor: '#cfe8fc', height: '7vh', alignItems: 'center', display: 'flex'}}>
                 <Button onClick={handleHome} startIcon={<HomeIcon />}>
                     Home
                 </Button>

@@ -237,18 +237,15 @@ const EmployeesList = () => {
 
     const renderFilterOptions = () => {
         return (
-            <>  
-                <h4>Puede utilizar % para reemplazar el inicio o final de una busqueda</h4>
-                <Stack direction='row' spacing={2}>
-                    {renderTextField('id','by ID', filterParams.id || '')}
-                    {renderTextField('first_name','by First Name', filterParams.first_name || '')}
-                    {renderTextField('last_name','by Last Name', filterParams.last_name || '')}
-                    {renderTextField('cuit','by CUIT', filterParams.cuit || '')}
-                    {renderTextField('team_id','by Team ID', filterParams.team_id || '')}
-                    {renderTextField('join_date','by Join Date', filterParams.join_date || '', 'date', true)}
-                    {renderTextField('rol','by Rol', filterParams.rol || '')}
-                </Stack> 
-            </>
+            <Stack direction='row' spacing={2}>
+                {renderTextField('id','by ID', filterParams.id || '')}
+                {renderTextField('first_name','by First Name', filterParams.first_name || '')}
+                {renderTextField('last_name','by Last Name', filterParams.last_name || '')}
+                {renderTextField('cuit','by CUIT', filterParams.cuit || '')}
+                {renderTextField('team_id','by Team ID', filterParams.team_id || '')}
+                {renderTextField('join_date','by Join Date', filterParams.join_date || '', 'date', true)}
+                {renderTextField('rol','by Rol', filterParams.rol || '')}
+            </Stack> 
         )
     }
 

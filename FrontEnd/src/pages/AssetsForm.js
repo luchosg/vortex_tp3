@@ -4,7 +4,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import {FormGroup, Container, Alert, AlertTitle, TextField, Button, Stack} from '@mui/material';
 
-import { createAsset, editAsset, fetchAsset } from '../actions';
+import { createAsset, editAsset, fetchAsset, resetErrorApi } from '../actions';
 import validateAsset from '../functions/validateAsset';
 import sanitizeAsset from '../functions/sanitizeAsset';
 
@@ -22,6 +22,7 @@ const AssetsForm = () => {
 
     const [editMode, setEditMode] = useState(newMode);
     const fetched_asset = useSelector(state => state.resources.fetched_asset);
+    const errorApi = useSelector(state => state.resources.error);
 
     const formVacio = {
         name: '',
@@ -54,12 +55,20 @@ const AssetsForm = () => {
     const handleCreate = () => {
         if(validateAsset(asset).length === 0){
             dispatch(createAsset(asset));
-            setAsset(formVacio);
-            setAlert('success');
-            setTimeout(()=>{
-                setAlert('');
-                navigate('/assets');
-            },1000);
+            // if(!errorApi){
+                setAsset(formVacio);
+                setAlert('success');
+                setTimeout(()=>{
+                    setAlert('');
+                    navigate('/assets');
+                },1000);
+            // } else {
+            //     setAlert('apiError');
+            //     dispatch(resetErrorApi());
+            //     setTimeout(()=>{
+            //         setAlert('');
+            //     },1000);
+            // }
         } else {
             setErrors(validateAsset(asset))
             setAlert('validateError');
@@ -81,6 +90,7 @@ const AssetsForm = () => {
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
+                navigate('/assets');
             },1000);
         } else {
             setAlert('validateError');
@@ -107,6 +117,13 @@ const AssetsForm = () => {
                     <Alert severity="error">
                         <AlertTitle>Error de carga</AlertTitle>
                         <strong>Complete correctamente todos los campos obligatorios</strong>
+                    </Alert>
+                )
+            case 'apiError':
+                return(
+                    <Alert severity="error">
+                        <AlertTitle>API Error</AlertTitle>
+                        <strong>{errorApi}</strong>
                     </Alert>
                 )
             default:
@@ -163,6 +180,13 @@ const AssetsForm = () => {
     }
 
     const renderForm = () => {
+        if(!fetched_asset){
+            return(
+                <Alert severity="warning">
+                        <AlertTitle>El asset no existe</AlertTitle>
+                </Alert>
+            )
+        }
         if(!asset){
             return(
                 <div>Loading...</div>
@@ -187,7 +211,7 @@ const AssetsForm = () => {
                     {renderTextField(true, false, 'purchase_date', 'Purchase Date', asset.purchase_date, 'date', true)}
                 </Stack>
                 <Stack direction='row' spacing={2}>
-                    {renderTextField(false, false,'employee_id', 'Employee ID', asset.employee_id || '')}
+                    {renderTextField(newMode? true: false, false,'employee_id', 'Employee ID', asset.employee_id || '')}
                 </Stack>
                 {renderButtons()}
             </FormGroup>
