@@ -39,12 +39,9 @@ const updateEmployeeValidationRules = [
             .isLength({min:2, max:30}).withMessage("El apellido debe tener un largo minimo de 2 y maximo de 30"),
         body('last_name').not().exists()
     ]),        
-    oneOf([
-        body('cuit')
-            .exists().withMessage("El campo es obligatorio")
-            .isLength({min:11, max:11}).withMessage("El cuit debe tener 11 de longitud"),
-        body('cuit').not().exists()
-    ]),
+    body('cuit')
+        .optional()
+        .isLength({min:11, max:11}).withMessage("El cuit debe tener 11 de longitud"),
     oneOf([
         body('team_id')
             .exists().withMessage("El campo es obligatorio")

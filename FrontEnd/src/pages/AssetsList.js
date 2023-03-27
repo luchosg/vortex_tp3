@@ -7,6 +7,19 @@ import sanitizeFilter from '../functions/sanitizeFilter';
 import {Box, Alert, AlertTitle, Container, Button, Stack, TextField, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import TableFooter from '@mui/material/TableFooter';
+
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,6 +34,11 @@ const AssetsList = () => {
     const [idToDelete, setIdToDelete] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const fetched_assets = useSelector(state => state.resources.fetched_assets);
+    const totalPages = useSelector(state => state.resources.totalPages);
+    const prevPage = useSelector(state => state.resources.prevPage);
+    const nextPage = useSelector(state => state.resources.nextPage);
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState(5);
     const [showFilters, setShowFilters] = useState(false);
     const [filterParams, setFilterParams] = useState({});
 
@@ -29,7 +47,7 @@ const AssetsList = () => {
             dispatch(fetchAssets(sanitizeFilter(filterParams)));
         }
         setLoading(false);
-    }, [dispatch, fetched_assets, isLoading])
+    }, [dispatch, fetched_assets, isLoading, page])
 
     //------------------------ HANDLERS ------------------------------
 
@@ -41,7 +59,6 @@ const AssetsList = () => {
     const handleAcceptDelete = ()=> {
         setOpenDialog(false);
         dispatch(deleteAsset(Number(idToDelete)));
-        // setLoading(true);
         setIdToDelete(null);
     }
 
@@ -54,18 +71,37 @@ const AssetsList = () => {
         setLoading(true);
     }
 
+    const handleBackButtonClick = () => {
+        setPage(prevPage);
+        setFilterParams({...filterParams, page: prevPage});
+        setLoading(true);
+    }
+
+    const handleNextButtonClick = () => {
+        setPage(nextPage);
+        setFilterParams({...filterParams, page: nextPage});
+        setLoading(true);
+    }
+
+    const handleNewPagination = () => {
+        if(Number(pagination) !== 0){
+            setFilterParams({...filterParams, limit: pagination});
+            setLoading(true);
+        }
+    }
+
     //------------------------ TABLA/PAGINACION -----------------------
 
-    const createData = (id, name, employee_id, description) => {
-        return { id, name, employee_id, description };
+    const createData = (id, name, type, employee_id) => {
+        return { id, name, type, employee_id };
       }
 
     const rows = [];
     if(fetched_assets){
-        fetched_assets.map(asset => rows.push(createData(asset.id, asset.name, asset.employee_id, asset.description)));
+        fetched_assets.map(asset => rows.push(createData(asset.id, asset.name, asset.type, asset.employee_id)));
     }
-    
-    const renderOptionButtons = ({id}) => { 
+
+    const renderOptionsButtons = id => {
         return(
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
@@ -73,45 +109,40 @@ const AssetsList = () => {
                     onClick={() => navigate(`/assets/${id}`)} 
                     variant="contained"
                     startIcon={<VisibilityIcon />}
-                    >More Info
+                >More Info
                 </Button>
                 <Button 
                     id={id} 
                     onClick={() => handleDelete(id)} 
                     variant="contained"
                     startIcon={<DeleteIcon />}
-                    >Delete
+                >Delete
                 </Button>
             </Stack>
         )
     }
 
-    const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        {
-            field: 'name',
-            headerName: 'Name',
-            width: 150,
-        },
-        {
-            field: 'employee_id',
-            headerName: 'Owner ID',
-            width: 150,
-        },
-        {
-            field: 'description',
-            headerName: 'Description',
-            width: 220,
-        },
-        {
-          field: 'options',
-          headerName: 'Options',
-          sortable: false,
-          width: 320,
-          renderCell: renderOptionButtons
-        },
-      ];
-    
+    const renderPaginationButtons = () => {
+        return (
+            <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
+                <IconButton
+                    onClick={handleBackButtonClick}
+                    disabled={page === 1}
+                    aria-label="previous page"
+                >
+                    <KeyboardArrowLeft />
+                </IconButton>
+                <IconButton
+                    onClick={handleNextButtonClick}
+                    disabled={page === totalPages}
+                    aria-label="next page"
+                >
+                    <KeyboardArrowRight />
+                </IconButton>
+            </Stack>
+        )
+    }
+
     //------------------------------ RENDERS ---------------------------------------------
 
     const renderTable = () => {
@@ -122,15 +153,59 @@ const AssetsList = () => {
               </Alert>
             )
         } else { return(
-            <Box sx={{ height: 400, width: 940 }}>
-                <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-                />
-            </Box>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell align="right">Name</TableCell>
+                            <TableCell align="right">Type</TableCell>
+                            <TableCell align="right">Employee ID</TableCell>
+                            <TableCell align="right">Options</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {rows.map((row) => (
+                            <TableRow
+                            key={row.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {row.id}
+                                </TableCell>
+                                <TableCell align="right">{row.name}</TableCell>
+                                <TableCell align="right">{row.type}</TableCell>
+                                <TableCell align="right">{row.employee_id}</TableCell>
+                                <TableCell align="right">{renderOptionsButtons(row.id)}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell>{`Page: ${page}, Total pages: ${totalPages}`}</TableCell>
+                                <TableCell>{renderPaginationButtons()}</TableCell>
+                                <TableCell>
+                                    <TextField 
+                                        id={'pagination'} 
+                                        label={'Pagination'}
+                                        onChange={event => setPagination(event.target.value)}
+                                        value={pagination}
+                                        type={'number'}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        id='paginationButton'
+                                        variant='contained'
+                                        onClick={handleNewPagination}
+                                    >
+                                        Apply Pagination
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
             )
         }
     }

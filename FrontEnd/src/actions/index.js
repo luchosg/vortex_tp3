@@ -44,7 +44,7 @@ export const editEmployee = employee => async dispatch => {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({...employee, cuit: employee.cuit.split('-').join('')})
+        body: JSON.stringify(employee)
     });
     const data = await response.json();
     console.log(data);
@@ -52,16 +52,15 @@ export const editEmployee = employee => async dispatch => {
 }
 
 export const fetchEmployees = filterParams => async dispatch => {
-        employeesURL.search = new URLSearchParams(filterParams);
-        const response = await fetch(employeesURL);
-        if(response.ok){
-            const data = await response.json();
-            dispatch({type: FETCH_EMPLOYEES, payload: data});
-            // const data = await response.json();
-            // dispatch({type: FETCH_EMPLOYEES, payload: data});
-        } else {
-            dispatch({type: FETCH_EMPLOYEES, payload: []});
-        }
+    employeesURL.search = new URLSearchParams(filterParams);
+    const response = await fetch(employeesURL);
+    employeesURL.search = '';
+    if(response.ok){
+        const data = await response.json();
+        dispatch({type: FETCH_EMPLOYEES, payload: data});
+    } else {
+        dispatch({type: FETCH_EMPLOYEES, payload: {data: [], totalPages: 0, prevPage: null, nextPage: null}});
+    }
 }
 
 export const fetchEmployee = id => async dispatch => {
@@ -73,11 +72,12 @@ export const fetchEmployee = id => async dispatch => {
 export const fetchAssets = filterParams => async dispatch => {
     assetsURL.search = new URLSearchParams(filterParams);
     const response = await fetch(assetsURL);
+    assetsURL.search = '';
     if(response.ok){
-        const {data} = await response.json();
+        const data = await response.json();
         dispatch({type: FETCH_ASSETS, payload: data});
     } else {
-        dispatch({type: FETCH_ASSETS, payload: []});
+        dispatch({type: FETCH_ASSETS, payload: {data: [], totalPages: 0, prevPage: null, nextPage: null}});
     }
 }
 

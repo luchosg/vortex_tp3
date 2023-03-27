@@ -78,6 +78,7 @@ const EmployeesForm = () => {
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
+                navigate('/');
             },1000);
         } else {
             setAlert('validateError');

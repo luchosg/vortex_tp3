@@ -87,6 +87,11 @@ const EmployeesList = () => {
             setLoading(true);
         }
     }
+
+    const handleShowInfo = id => {
+        setFilterParams({});
+        navigate(`/employees/${id}`)
+    }
     //------------------------ TABLA/PAGINACION -----------------------
 
     const createData = (id, first_name, last_name, cuit) => {
@@ -103,7 +108,7 @@ const EmployeesList = () => {
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
                     id={id} 
-                    onClick={() => navigate(`/employees/${id}`)} 
+                    onClick={() => handleShowInfo(id)} 
                     variant="contained"
                     startIcon={<VisibilityIcon />}
                 >More Info

@@ -40,7 +40,9 @@ const deleteEmployee = async eid => {
 
 const updateEmployee = async (reqBody, eid) => {
     const sql = updateBodyToSQL("employees", reqBody, eid);
+    console.log(sql);
     const result = await connection.query(sql).spread(result => result);
+    console.log(result);
     return result.affectedRows;
 }
 
