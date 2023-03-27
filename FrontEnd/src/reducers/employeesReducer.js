@@ -2,7 +2,10 @@ import { CREATE_EMPLOYEE, DELETE_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEE, FETCH_
 
 const initialState = {
     fetched_employees: null,
-    fetched_employee: null
+    fetched_employee: null,
+    totalPages: null,
+    prevPage: null,
+    nextPage: null
 }
 
 const employeesReducer = (state = initialState, action) => {
@@ -15,7 +18,15 @@ const employeesReducer = (state = initialState, action) => {
             return {...state, fetched_employees: state.fetched_employees.map(
                 employee => employee.id === action.payload.id  ? action.payload : employee)}
         case FETCH_EMPLOYEES:
-            return {...state, fetched_employees: action.payload}
+            return {
+                ...state,
+                fetched_employees: action.payload.data,
+                totalPages: action.payload.totalPages,
+                prevPage: action.payload.prevPage,
+                nextPage: action.payload.nextPage
+            } 
+        // case FETCH_EMPLOYEES:
+        //    return {...state, fetched_employees: action.payload}
         case FETCH_EMPLOYEE:
             return {...state, fetched_employee: action.payload}
         default:

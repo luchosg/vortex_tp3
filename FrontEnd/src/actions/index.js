@@ -55,8 +55,10 @@ export const fetchEmployees = filterParams => async dispatch => {
         employeesURL.search = new URLSearchParams(filterParams);
         const response = await fetch(employeesURL);
         if(response.ok){
-            const {data} = await response.json();
+            const data = await response.json();
             dispatch({type: FETCH_EMPLOYEES, payload: data});
+            // const data = await response.json();
+            // dispatch({type: FETCH_EMPLOYEES, payload: data});
         } else {
             dispatch({type: FETCH_EMPLOYEES, payload: []});
         }

@@ -33,13 +33,23 @@ const createBodyToSQL = (tableName, reqBody) => {
     return `INSERT INTO ${tableName} (${fields}) VALUES (${values})`;
   }
 
-const filterAndPagination = (baseSQL, filterParams, limit = 10, page = 1) => {
+const filterAndPagination = (baseSQL, filterParams, limit = 5, page = 1, total) => {
     let newSQL = baseSQL;
     const keysArray = Object.keys(filterParams);
     const valuesArray = Object.values(filterParams);
     const length = keysArray.length;
+
     const offset = (page-1)*limit;
-    if(length === 0) return baseSQL + ` LIMIT ${limit} OFFSET ${offset}`;
+    const totalPages = Math.ceil(total / limit);
+    const prevPage = page > 1 ? Number(page) - 1 : null;
+    const nextPage = page < totalPages ? Number(page) + 1 : null;
+
+    if(length === 0) return {
+        sql: baseSQL + ` LIMIT ${limit} OFFSET ${offset}`,
+        totalPages,
+        prevPage,
+        nextPage
+    }
     else {
         for(let i = 0; i<length; i++){
             if(i === 0) {
@@ -50,12 +60,37 @@ const filterAndPagination = (baseSQL, filterParams, limit = 10, page = 1) => {
         }
     }
     newSQL += ` LIMIT ${limit} OFFSET ${offset}`;
-    return newSQL;
+    return {
+        sql: newSQL,
+        totalPages,
+        prevPage,
+        nextPage
+    };
+}
+
+const filterCount = (baseSQL, filterParams) => {
+    let newSQL = baseSQL;
+    const keysArray = Object.keys(filterParams);
+    const valuesArray = Object.values(filterParams);
+    const length = keysArray.length;
+
+    if(length === 0) return baseSQL
+    else {
+        for(let i = 0; i<length; i++){
+            if(i === 0) {
+                newSQL += ` WHERE ${keysArray[i]} LIKE "${valuesArray[i]}"`
+            } else {
+                newSQL += ` AND ${keysArray[i]} LIKE "${valuesArray[i]}"`
+            }
+        }
+    }
+    return newSQL
 }
 
 module.exports = {
     updateBodyToSQL,
     createBodyToSQL,
-    filterAndPagination
+    filterAndPagination,
+    filterCount
 }
 

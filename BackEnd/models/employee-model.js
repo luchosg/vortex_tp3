@@ -1,11 +1,23 @@
 const connection = require('../config/db-config');
-const {filterAndPagination, createBodyToSQL, updateBodyToSQL} = require('../utils/functions');
+const {filterAndPagination, createBodyToSQL, updateBodyToSQL, filterCount} = require('../utils/functions');
 
-const getAllEmployees = async queryParams => {
+const getAllEmployees = async (queryParams, total) => {
     const {limit, page, ...filterParams} = queryParams;
-    const sql = filterAndPagination(`SELECT * FROM employees`, filterParams, limit, page);
+    const {sql, totalPages, prevPage, nextPage} = filterAndPagination(`SELECT * FROM employees`, filterParams, limit, page, total);
     const employees = await connection.query(sql).spread(rows => rows);
-    return employees;
+    return {
+        employees,
+        totalPages,
+        prevPage,
+        nextPage
+    };
+}
+
+const getTotalEmployeesCount = async queryParams => {
+    const {limit, page, ...filterParams} = queryParams;
+    const sql = filterCount('SELECT COUNT(*) as total FROM employees', filterParams);
+    const total = await connection.query(sql).spread(row => row);
+    return total[0];
 }
 
 const getEmployeeById = async eid => {
@@ -37,5 +49,6 @@ module.exports = {
     getEmployeeById,
     createEmployee,
     deleteEmployee,
-    updateEmployee
+    updateEmployee,
+    getTotalEmployeesCount
 }

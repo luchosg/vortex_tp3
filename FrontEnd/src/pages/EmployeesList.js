@@ -4,8 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { deleteEmployee, fetchEmployees } from '../actions';
 import sanitizeFilter from '../functions/sanitizeFilter';
 
-import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from '@mui/material';
+import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, TableFooter} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -21,16 +32,20 @@ const EmployeesList = () => {
     const [idToDelete, setIdToDelete] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const fetched_employees = useSelector(state => state.rrhh.fetched_employees);
+    const totalPages = useSelector(state => state.rrhh.totalPages);
+    const prevPage = useSelector(state => state.rrhh.prevPage);
+    const nextPage = useSelector(state => state.rrhh.nextPage);
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState(5);
     const [filterParams, setFilterParams] = useState({});
     const [showFilters, setShowFilters] = useState(false);
 
     useEffect(()=>{
-        // console.log(sanitizeFilter(filterParams));
         if(isLoading){
             dispatch(fetchEmployees(sanitizeFilter(filterParams)));
         }
         setLoading(false);
-    }, [dispatch, fetched_employees, isLoading])
+    }, [dispatch, fetched_employees, isLoading, page])
 
     //------------------------ HANDLERS ------------------------------
 
@@ -53,6 +68,25 @@ const EmployeesList = () => {
         setFilterParams({});
         setLoading(true);
     }
+
+    const handleBackButtonClick = () => {
+        setPage(prevPage);
+        setFilterParams({...filterParams, page: prevPage});
+        setLoading(true);
+    }
+
+    const handleNextButtonClick = () => {
+        setPage(nextPage);
+        setFilterParams({...filterParams, page: nextPage});
+        setLoading(true);
+    }
+
+    const handleNewPagination = () => {
+        if(Number(pagination) !== 0){
+            setFilterParams({...filterParams, limit: pagination});
+            setLoading(true);
+        }
+    }
     //------------------------ TABLA/PAGINACION -----------------------
 
     const createData = (id, first_name, last_name, cuit) => {
@@ -61,10 +95,10 @@ const EmployeesList = () => {
 
     const rows = [];
     if(fetched_employees){
-        fetched_employees.map(employee => rows.push(createData(employee.id, employee.first_name, employee.last_name, employee.cuit)));
-    }
+        fetched_employees.map(employee => rows.push(createData(employee.id, employee.first_name, employee.last_name, employee.cuit)))
+    }  
     
-    const renderOptionButtons = ({id}) => { 
+    const renderOptionsButtons = id => {
         return(
             <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
                 <Button 
@@ -72,45 +106,40 @@ const EmployeesList = () => {
                     onClick={() => navigate(`/employees/${id}`)} 
                     variant="contained"
                     startIcon={<VisibilityIcon />}
-                    >More Info
+                >More Info
                 </Button>
                 <Button 
                     id={id} 
                     onClick={() => handleDelete(id)} 
                     variant="contained"
                     startIcon={<DeleteIcon />}
-                    >Delete
+                >Delete
                 </Button>
             </Stack>
         )
     }
 
-    const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        {
-          field: 'first_name',
-          headerName: 'First name',
-          width: 150,
-        },
-        {
-          field: 'last_name',
-          headerName: 'Last name',
-          width: 150,
-        },
-        {
-            field: 'cuit',
-            headerName: 'cuit',
-            width: 220,
-        },
-        {
-          field: 'options',
-          headerName: 'Options',
-          sortable: false,
-          width: 320,
-          renderCell: renderOptionButtons
-        },
-      ];
-    
+    const renderPaginationButtons = () => {
+        return (
+            <Stack direction="row" spacing={2} display='flex' justifyContent='center' alignItems='center'>
+                <IconButton
+                    onClick={handleBackButtonClick}
+                    disabled={page === 1}
+                    aria-label="previous page"
+                >
+                    <KeyboardArrowLeft />
+                </IconButton>
+                <IconButton
+                    onClick={handleNextButtonClick}
+                    disabled={page === totalPages}
+                    aria-label="next page"
+                >
+                    <KeyboardArrowRight />
+                </IconButton>
+            </Stack>
+        )
+    }
+
     //------------------------------ RENDERS ---------------------------------------------
 
     const renderTable = () => {
@@ -121,15 +150,59 @@ const EmployeesList = () => {
               </Alert>
             )
         } else { return(
-            <Box sx={{ height: 400, width: 940 }}>
-                <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-                />
-            </Box>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell align="right">First Name</TableCell>
+                            <TableCell align="right">Last Name</TableCell>
+                            <TableCell align="right">CUIT</TableCell>
+                            <TableCell align="right">Options</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {rows.map((row) => (
+                            <TableRow
+                            key={row.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {row.id}
+                                </TableCell>
+                                <TableCell align="right">{row.first_name}</TableCell>
+                                <TableCell align="right">{row.last_name}</TableCell>
+                                <TableCell align="right">{row.cuit}</TableCell>
+                                <TableCell align="right">{renderOptionsButtons(row.id)}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell>{`Page: ${page}, Total pages: ${totalPages}`}</TableCell>
+                                <TableCell>{renderPaginationButtons()}</TableCell>
+                                <TableCell>
+                                    <TextField 
+                                        id={'pagination'} 
+                                        label={'Pagination'}
+                                        onChange={event => setPagination(event.target.value)}
+                                        value={pagination}
+                                        type={'number'}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        id='pagination'
+                                        variant='contained'
+                                        onClick={handleNewPagination}
+                                    >
+                                        Apply Pagination
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
             )
         }
     }
@@ -184,8 +257,8 @@ const EmployeesList = () => {
                 >
                     {!showFilters? 'Show filters' : 'Hide filters'}
                 </Button>
-                {showFilters? <Button variant='contained' onClick={() => setLoading(true)}>Apply filters</Button> : ''}
-                {showFilters? <Button variant='contained' color='secondary' onClick={handleResetFilter}>Reset</Button> : ''}
+                {showFilters? <Button variant='contained' onClick={() => setLoading(true)}>Apply filters</Button> : null}
+                {showFilters? <Button variant='contained' color='secondary' onClick={handleResetFilter}>Reset</Button> : null}
             </Stack>   
         )
     }
@@ -224,7 +297,7 @@ const EmployeesList = () => {
                     {renderFilterButtons()}
                 </div>
                 <div>
-                    {showFilters? renderFilterOptions() : ''}
+                    {showFilters? renderFilterOptions() : null}
                 </div>
                 <div width= '100%'>
                     {fetched_employees ? renderTable() : renderInit()}

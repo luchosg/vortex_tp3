@@ -1,11 +1,23 @@
 const connection = require('../config/db-config');
-const {filterAndPagination, createBodyToSQL, updateBodyToSQL} = require('../utils/functions');
+const {filterAndPagination, createBodyToSQL, updateBodyToSQL, filterCount} = require('../utils/functions');
 
-const getAllAssets = async queryParams => {
+const getAllAssets = async (queryParams, total) => {
     const {limit, page, ...filterParams} = queryParams;
-    const sql = filterAndPagination(`SELECT * FROM assets`, filterParams, limit, page);
+    const {sql, totalPages, prevPage, nextPage} = filterAndPagination(`SELECT * FROM assets`, filterParams, limit, page, total);
     const assets = await connection.query(sql).spread(rows => rows);
-    return assets;
+    return {
+        assets,
+        totalPages,
+        prevPage,
+        nextPage
+    };
+}
+
+const getTotalAssetsCount = async queryParams => {
+    const {limit, page, ...filterParams} = queryParams;
+    const sql = filterCount('SELECT COUNT(*) as total FROM assets', filterParams);
+    const total = await connection.query(sql).spread(row => row);
+    return total[0];
 }
 
 const getAssetById = async aid => {
@@ -52,5 +64,6 @@ module.exports = {
     createAsset,
     updateAsset,
     getAssetsByEmployeeId,
-    resetAllAssetsByEmployeeId
+    resetAllAssetsByEmployeeId,
+    getTotalAssetsCount
 }

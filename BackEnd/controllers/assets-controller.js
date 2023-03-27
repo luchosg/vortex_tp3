@@ -5,11 +5,20 @@ const HttpError = require('../customErrors/HttpError');
 const getAllAssets = async (req, res, next) => {
     try{
         const queryParams = req.query;
-        const assets = await assetModel.getAllAssets(queryParams);
+        const {total} = await assetModel.getTotalAssetsCount(queryParams);
+        if(total === 0){
+            next(new HttpError(`Could not find assets`, 404));
+        }
+        const {assets, totalPages, prevPage, nextPage} = await assetModel.getAllAssets(queryParams, total);
         if(assets.length === 0){
             next(new HttpError(`Could not find assets`, 404));
         } else {
-            res.status(200).json({data: assets});
+            res.status(200).json({
+                data: assets,
+                totalPages,
+                prevPage,
+                nextPage
+            });
         }
     } catch({message}){
         next(new HttpError(message, 500));
