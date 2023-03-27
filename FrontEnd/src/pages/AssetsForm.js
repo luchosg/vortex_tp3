@@ -180,7 +180,7 @@ const AssetsForm = () => {
     }
 
     const renderForm = () => {
-        if(!fetched_asset){
+        if(!newMode && !fetched_asset){
             return(
                 <Alert severity="warning">
                         <AlertTitle>El asset no existe</AlertTitle>

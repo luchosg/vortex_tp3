@@ -161,7 +161,7 @@ const EmployeesForm = () => {
     }
 
     const renderForm = () => {
-        if(!fetched_employee){
+        if(!newMode && !fetched_employee){
             return(
                 <Alert severity="warning">
                         <AlertTitle>El empleado no existe</AlertTitle>
