@@ -51,11 +51,15 @@ export const editEmployee = employee => async dispatch => {
     dispatch({type: EDIT_EMPLOYEE, payload: employee});
 }
 
-export const fetchEmployees = () => async dispatch => {
-    // employeesURL.search = new URLSearchParams(params)
-    const response = await fetch(employeesURL);
-    const {data} = await response.json();
-    dispatch({type: FETCH_EMPLOYEES, payload: data});
+export const fetchEmployees = filterParams => async dispatch => {
+        employeesURL.search = new URLSearchParams(filterParams);
+        const response = await fetch(employeesURL);
+        if(response.ok){
+            const {data} = await response.json();
+            dispatch({type: FETCH_EMPLOYEES, payload: data});
+        } else {
+            dispatch({type: FETCH_EMPLOYEES, payload: []});
+        }
 }
 
 export const fetchEmployee = id => async dispatch => {
@@ -64,10 +68,15 @@ export const fetchEmployee = id => async dispatch => {
     dispatch({type: FETCH_EMPLOYEE, payload: {...data, join_date: data.join_date.split('T')[0]}});
 }
 
-export const fetchAssets = () => async dispatch => {
+export const fetchAssets = filterParams => async dispatch => {
+    assetsURL.search = new URLSearchParams(filterParams);
     const response = await fetch(assetsURL);
-    const {data} = await response.json();
-    dispatch({type: FETCH_ASSETS, payload: data});
+    if(response.ok){
+        const {data} = await response.json();
+        dispatch({type: FETCH_ASSETS, payload: data});
+    } else {
+        dispatch({type: FETCH_ASSETS, payload: []});
+    }
 }
 
 export const fetchAsset = id => async dispatch => {

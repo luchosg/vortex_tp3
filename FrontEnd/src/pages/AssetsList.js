@@ -2,8 +2,9 @@ import React, {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteAsset, fetchAssets } from '../actions';
+import sanitizeFilter from '../functions/sanitizeFilter';
 
-import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
+import {Box, Alert, AlertTitle, Container, Button, Stack, TextField, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -20,10 +21,12 @@ const AssetsList = () => {
     const [idToDelete, setIdToDelete] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const fetched_assets = useSelector(state => state.resources.fetched_assets);
+    const [showFilters, setShowFilters] = useState(false);
+    const [filterParams, setFilterParams] = useState({});
 
     useEffect(()=>{
         if(isLoading){
-            dispatch(fetchAssets());
+            dispatch(fetchAssets(sanitizeFilter(filterParams)));
         }
         setLoading(false);
     }, [dispatch, fetched_assets, isLoading])
@@ -44,6 +47,11 @@ const AssetsList = () => {
 
     const handleCancelDelete = () => {
         setOpenDialog(false);
+    }
+
+    const handleResetFilter = () => {
+        setFilterParams({});
+        setLoading(true);
     }
 
     //------------------------ TABLA/PAGINACION -----------------------
@@ -110,8 +118,7 @@ const AssetsList = () => {
         if(rows.length === 0){
             return (
               <Alert severity="warning">
-                <AlertTitle>No hay mas empleados</AlertTitle>
-                <strong>Agrega un nuevo empleado</strong>
+                <AlertTitle>No se encontraron assets</AlertTitle>
               </Alert>
             )
         } else { return(
@@ -133,6 +140,55 @@ const AssetsList = () => {
             <div>
                 Loading...
             </div>
+        )
+    }
+
+    const renderTextField = (id, label, value, type, shrink) => {
+        return(
+            <TextField 
+                id={id} 
+                label={label}
+                onChange={event => setFilterParams({...filterParams, [event.target.id]: event.target.value })}
+                value={value}
+                type={type}
+                InputLabelProps={{
+                    shrink: shrink
+                }}
+            />
+        )
+    }
+
+    const renderFilterOptions = () => {
+        return (
+            <>  
+                <h4>Puede utilizar % para reemplazar el inicio o final de una busqueda</h4>
+                <Stack direction='row' spacing={2}>
+                    {renderTextField('id','by ID', filterParams.id || '')}
+                    {renderTextField('name','by Name', filterParams.name || '')}
+                    {renderTextField('type','by Type', filterParams.type || '')}
+                    {renderTextField('code','by Code', filterParams.code || '')}
+                    {renderTextField('brand','by Brand', filterParams.brand || '')}
+                    {renderTextField('description','by Description', filterParams.description || '')}
+                    {renderTextField('purchase_date','by Purchase Date', filterParams.purchase_date || '', 'date', true)}
+                    {renderTextField('employee_id','by Employee ID', filterParams.employee_id || '')}
+                </Stack> 
+            </>
+        )
+    }
+
+    const renderFilterButtons = () => {
+        return(
+            <Stack direction='row' spacing={2}>
+                <Button 
+                    variant='contained' 
+                    color='secondary' 
+                    onClick={() => setShowFilters(showFilters => !showFilters)}
+                >
+                    {!showFilters? 'Show filters' : 'Hide filters'}
+                </Button>
+                {showFilters? <Button variant='contained' onClick={() => setLoading(true)}>Apply filters</Button> : ''}
+                {showFilters? <Button variant='contained' color='secondary' onClick={handleResetFilter}>Reset</Button> : ''}
+            </Stack>   
         )
     }
 
@@ -165,6 +221,12 @@ const AssetsList = () => {
             <Stack direction='column' spacing={2} mt='100px' display='flex' justifyContent='center' alignItems='center'>
                 <div>
                     <h1>Lista de activos</h1>
+                </div>
+                <div>
+                    {renderFilterButtons()}
+                </div>
+                <div>
+                    {showFilters? renderFilterOptions() : ''}
                 </div>
                 <div width= '100%'>
                     {fetched_assets ? renderTable() : renderInit()}

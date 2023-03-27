@@ -2,8 +2,9 @@ import React, {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteEmployee, fetchEmployees } from '../actions';
+import sanitizeFilter from '../functions/sanitizeFilter';
 
-import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
+import {Box, Alert, AlertTitle, Container, Button, Stack, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -20,12 +21,13 @@ const EmployeesList = () => {
     const [idToDelete, setIdToDelete] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const fetched_employees = useSelector(state => state.rrhh.fetched_employees);
-    const [filterParams, setFilterParams] = useState(null);
+    const [filterParams, setFilterParams] = useState({});
     const [showFilters, setShowFilters] = useState(false);
 
     useEffect(()=>{
+        // console.log(sanitizeFilter(filterParams));
         if(isLoading){
-            dispatch(fetchEmployees());
+            dispatch(fetchEmployees(sanitizeFilter(filterParams)));
         }
         setLoading(false);
     }, [dispatch, fetched_employees, isLoading])
@@ -47,6 +49,10 @@ const EmployeesList = () => {
         setOpenDialog(false);
     }
 
+    const handleResetFilter = () => {
+        setFilterParams({});
+        setLoading(true);
+    }
     //------------------------ TABLA/PAGINACION -----------------------
 
     const createData = (id, first_name, last_name, cuit) => {
@@ -111,8 +117,7 @@ const EmployeesList = () => {
         if(rows.length === 0){
             return (
               <Alert severity="warning">
-                <AlertTitle>No hay mas empleados</AlertTitle>
-                <strong>Agrega un nuevo empleado</strong>
+                <AlertTitle>No se encontraron empleados</AlertTitle>
               </Alert>
             )
         } else { return(
@@ -137,8 +142,52 @@ const EmployeesList = () => {
         )
     }
 
+    const renderTextField = (id, label, value, type, shrink) => {
+        return(
+            <TextField 
+                id={id} 
+                label={label}
+                onChange={event => setFilterParams({...filterParams, [event.target.id]: event.target.value })}
+                value={value}
+                type={type}
+                InputLabelProps={{
+                    shrink: shrink
+                }}
+            />
+        )
+    }
+
     const renderFilterOptions = () => {
-        return <div></div>
+        return (
+            <>  
+                <h4>Puede utilizar % para reemplazar el inicio o final de una busqueda</h4>
+                <Stack direction='row' spacing={2}>
+                    {renderTextField('id','by ID', filterParams.id || '')}
+                    {renderTextField('first_name','by First Name', filterParams.first_name || '')}
+                    {renderTextField('last_name','by Last Name', filterParams.last_name || '')}
+                    {renderTextField('cuit','by CUIT', filterParams.cuit || '')}
+                    {renderTextField('team_id','by Team ID', filterParams.team_id || '')}
+                    {renderTextField('join_date','by Join Date', filterParams.join_date || '', 'date', true)}
+                    {renderTextField('rol','by Rol', filterParams.rol || '')}
+                </Stack> 
+            </>
+        )
+    }
+
+    const renderFilterButtons = () => {
+        return(
+            <Stack direction='row' spacing={2}>
+                <Button 
+                    variant='contained' 
+                    color='secondary' 
+                    onClick={() => setShowFilters(showFilters => !showFilters)}
+                >
+                    {!showFilters? 'Show filters' : 'Hide filters'}
+                </Button>
+                {showFilters? <Button variant='contained' onClick={() => setLoading(true)}>Apply filters</Button> : ''}
+                {showFilters? <Button variant='contained' color='secondary' onClick={handleResetFilter}>Reset</Button> : ''}
+            </Stack>   
+        )
     }
 
     const renderDialog = () => {
@@ -172,13 +221,9 @@ const EmployeesList = () => {
                     <h1>Lista de empleados</h1>
                 </div>
                 <div>
-                    <Button 
-                        variant='contained' 
-                        color='secondary' 
-                        onClick={() => setShowFilters(showFilters => !showFilters)}
-                    >
-                        {showFilters? 'Show filters' : 'Hide filters'}
-                    </Button>
+                    {renderFilterButtons()}
+                </div>
+                <div>
                     {showFilters? renderFilterOptions() : ''}
                 </div>
                 <div width= '100%'>
