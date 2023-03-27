@@ -9,8 +9,6 @@ const initialState = {
     error: null
 }
 
-//Ver que pasa cuando editamos y no estan fetcheados los assets
-
 const assetsReducer = (state = initialState, action) => {
     switch (action.type){
         case DELETE_ASSET:

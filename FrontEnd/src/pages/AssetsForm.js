@@ -4,7 +4,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import {FormGroup, Container, Alert, AlertTitle, TextField, Button, Stack} from '@mui/material';
 
-import { createAsset, editAsset, fetchAsset, resetErrorApi } from '../actions';
+import { createAsset, editAsset, fetchAsset } from '../actions';
 import validateAsset from '../functions/validateAsset';
 import sanitizeAsset from '../functions/sanitizeAsset';
 
@@ -22,7 +22,6 @@ const AssetsForm = () => {
 
     const [editMode, setEditMode] = useState(newMode);
     const fetched_asset = useSelector(state => state.resources.fetched_asset);
-    const errorApi = useSelector(state => state.resources.error);
 
     const formVacio = {
         name: '',
@@ -55,20 +54,12 @@ const AssetsForm = () => {
     const handleCreate = () => {
         if(validateAsset(asset).length === 0){
             dispatch(createAsset(asset));
-            // if(!errorApi){
-                setAsset(formVacio);
-                setAlert('success');
-                setTimeout(()=>{
-                    setAlert('');
-                    navigate('/assets');
-                },1000);
-            // } else {
-            //     setAlert('apiError');
-            //     dispatch(resetErrorApi());
-            //     setTimeout(()=>{
-            //         setAlert('');
-            //     },1000);
-            // }
+            setAsset(formVacio);
+            setAlert('success');
+            setTimeout(()=>{
+                setAlert('');
+                navigate('/assets');
+            },1000);
         } else {
             setErrors(validateAsset(asset))
             setAlert('validateError');
@@ -117,13 +108,6 @@ const AssetsForm = () => {
                     <Alert severity="error">
                         <AlertTitle>Error de carga</AlertTitle>
                         <strong>Complete correctamente todos los campos obligatorios</strong>
-                    </Alert>
-                )
-            case 'apiError':
-                return(
-                    <Alert severity="error">
-                        <AlertTitle>API Error</AlertTitle>
-                        <strong>{errorApi}</strong>
                     </Alert>
                 )
             default:

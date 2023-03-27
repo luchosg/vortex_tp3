@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { deleteAsset, fetchAssets } from '../actions';
 import sanitizeFilter from '../functions/sanitizeFilter';
 
-import {Box, Alert, AlertTitle, Container, Button, Stack, TextField, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {Alert, AlertTitle, Container, Button, Stack, TextField, Fab, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

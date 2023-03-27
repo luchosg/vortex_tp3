@@ -11,13 +11,8 @@ const initialState = {
 
 const employeesReducer = (state = initialState, action) => {
     switch (action.type){
-        // case CREATE_EMPLOYEE:
-        //     return {...state, fetched_employees: [...state.fetched_employees, action.payload]}
         case DELETE_EMPLOYEE:
             return {...state, fetched_employees: state.fetched_employees.filter(employee => employee.id !== action.payload)}
-        // case EDIT_EMPLOYEE:
-        //     return {...state, fetched_employees: state.fetched_employees.map(
-        //         employee => employee.id === action.payload.id  ? action.payload : employee)}
         case FETCH_EMPLOYEES:
             return {
                 ...state,
