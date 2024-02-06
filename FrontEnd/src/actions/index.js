@@ -29,7 +29,7 @@ export const deleteEmployee = id => async dispatch => {
         }
     });
     const data = await response.json();
-    dispatch({type: DELETE_EMPLOYEE, payload: id});
+    // dispatch({type: DELETE_EMPLOYEE, payload: id});
 }
 
 export const editEmployee = employee => async dispatch => {

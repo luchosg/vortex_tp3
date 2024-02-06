@@ -4,7 +4,8 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import {FormGroup, Container, Alert, AlertTitle, TextField, Button, Stack} from '@mui/material';
 
-import { createEmployee, editEmployee, fetchEmployee } from '../actions';
+import { editEmployee, fetchEmployee } from '../actions';
+import { createEmployee, resetMessage } from '../actions/employeesActions';
 import validateEmployee from '../functions/validateEmployee';
 
 const EmployeesForm = () => {
@@ -55,6 +56,7 @@ const EmployeesForm = () => {
             setAlert('success');
             setTimeout(()=>{
                 setAlert('');
+                dispatch(resetMessage())
                 navigate('/');
             },1000);
         } else {

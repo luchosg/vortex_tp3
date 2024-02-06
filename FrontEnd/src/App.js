@@ -1,6 +1,6 @@
 import React from 'react';
 import {Route, createRoutesFromElements, createBrowserRouter, RouterProvider,} from 'react-router-dom';
-import EmployeesList from './pages/EmployeesList';
+import EmployeeList from './pages/EmployeeList';
 import ErrorPath from './components/Common/ErrorPath';
 import NavBarWrapper from './components/Common/NavBarWrapper';
 import AssetsList from './pages/AssetsList';
@@ -12,7 +12,7 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={<NavBarWrapper />} errorElement={<ErrorPath error='ruta'/>}>
-            <Route path='/' element={<EmployeesList />} />
+            <Route path='/' element={<EmployeeList />} />
             <Route path='/new' element={<EmployeesForm />} />
             <Route path='/employees/:id' element={<EmployeesForm />} errorElement={<ErrorPath error='empleado'/>}/>
             <Route path='/assets' element={<AssetsList />} />
